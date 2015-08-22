@@ -12,8 +12,26 @@ public class LoggerConfiguration {
 	private LoggerConfiguration() {
 	}
 
+	/**
+	 * 
+	 * @deprecated This logger is prone to be unmanageable, prefer to use
+	 *             {@link #getSimpleLogger(String)} or
+	 *             {@link #getSimpleLogger(Class)}.
+	 */
 	static public Logger getSimpleLogger() {
 		Logger logger = Logger.getAnonymousLogger();
+		configureSimpleLogger(logger, null);
+		return logger;
+	}
+
+	static public Logger getSimpleLogger(String name) {
+		Logger logger = Logger.getLogger(name);
+		configureSimpleLogger(logger, null);
+		return logger;
+	}
+
+	static public Logger getSimpleLogger(Class<?> clazz) {
+		Logger logger = Logger.getLogger(clazz.getName());
 		configureSimpleLogger(logger, null);
 		return logger;
 	}
