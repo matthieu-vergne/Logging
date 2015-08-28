@@ -1,5 +1,8 @@
 package fr.vergne.logging;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.logging.Formatter;
@@ -16,7 +19,22 @@ public class OneLineFormatter extends Formatter {
 		Level level = record.getLevel();
 		String location = record.getSourceClassName() + "."
 				+ record.getSourceMethodName() + "()";
-		String message = record.getMessage();
-		return date + " " + level + ": " + message + " [" + location + "]\n";
+		String message = record.getMessage() == null ? "" : record.getMessage() + " ";
+		String logged = date + " " + level + ": " + message + "[" + location
+				+ "]\n";
+
+		Throwable cause = record.getThrown();
+		if (cause != null) {
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			PrintStream stream = new PrintStream(bytes);
+			cause.printStackTrace(stream);
+			stream.close();
+
+			logged += new String(bytes.toByteArray(), Charset.forName("UTF-8"));
+		} else {
+			// nothing to append
+		}
+
+		return logged;
 	}
 }
